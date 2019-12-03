@@ -51,7 +51,7 @@ SBY             EQU   6                         ; STANDBY state value
 ;********************************************************************************************
                 ORG   $3000
                 
-CRNT_STATE      DC.B  1                         ; Current state register
+CRNT_STATE      DC.B  6                         ; Current state register
 
 COUNT1          DC.W  0                         ; initialize 2-byte COUNT1 to $0000
 COUNT2          DC.W  0                         ; initialize 2-byte COUNT2 to $0000
@@ -243,13 +243,13 @@ NO_FWD          NOP                             ; Else
 START_EXIT      RTS                           	; return to the MAIN routine
 ;********************************************************************************************
 FWD_ST          PULD                            ;
-                ; BRSET PORTAD0,$04,NO_FWD_BUMP   ; If FWD_BUMP then
-               ; LDAA  SEC_PTH_INT               ; Correct NEXT_D value
-               ; STAA  NEXT_D                    ; ""
-               ; JSR   INIT_REV                  ; Initialize the REVERSE routine
-               ; MOVB  #REV,CRNT_STATE           ; Set CRNT_STATE to REV
-               ; JMP   FWD_EXIT                  ; and return
-               SWI
+                BRSET PORTAD0,$04,NO_FWD_BUMP   ; If FWD_BUMP then
+                LDAA  SEC_PTH_INT               ; Correct NEXT_D value
+                STAA  NEXT_D                    ; ""
+                JSR   INIT_REV                  ; Initialize the REVERSE routine
+                MOVB  #REV,CRNT_STATE           ; Set CRNT_STATE to REV
+                JMP   FWD_EXIT                  ; and return
+              
 NO_FWD_BUMP     BRSET PORTAD0,$08,NO_REV_BUMP   ; Else if REV_BUMP, then 
                 JMP   INIT_BK_TRK               ; Initialize the BACKTRACK state
                 MOVB  #BK_TRK,CRNT_STATE        ; Set CRNT_STATE to BK_TRK
